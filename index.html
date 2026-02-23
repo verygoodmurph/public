@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Murph — Very Good Designer</title>
+    <meta
+      name="description"
+      content="Murph is a designer at Very Good Ventures, building Figma plugins and crafting design systems."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@1,400&family=Bodoni+Moda:ital,wght@1,400&family=Instrument+Serif:ital@1&family=Libre+Baskerville:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f2ece4;
+        --text: #3a3235;
+        --text-muted: #998e8a;
+        --accent: #c49a92;
+        --grain-opacity: 0.03;
+        --pill-bg: rgba(58, 50, 53, 0.055);
+        --pill-hover: rgba(58, 50, 53, 0.1);
+        --pill-border: rgba(58, 50, 53, 0.08);
+        --divider: rgba(58, 50, 53, 0.1);
+        --orb-1: rgba(196, 154, 146, 0.15);
+        --orb-2: rgba(160, 142, 176, 0.12);
+        --orb-3: rgba(142, 176, 168, 0.1);
+      }
+
+      [data-theme="dark"] {
+        --bg: #1a1618;
+        --text: #e0d6cc;
+        --text-muted: #7a706a;
+        --accent: #c49a92;
+        --grain-opacity: 0.045;
+        --pill-bg: rgba(224, 214, 204, 0.055);
+        --pill-hover: rgba(224, 214, 204, 0.1);
+        --pill-border: rgba(224, 214, 204, 0.06);
+        --divider: rgba(224, 214, 204, 0.08);
+        --orb-1: rgba(196, 154, 146, 0.1);
+        --orb-2: rgba(140, 120, 170, 0.08);
+        --orb-3: rgba(120, 165, 155, 0.06);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        overflow: hidden;
+        position: relative;
+        transition:
+          background 0.7s ease,
+          color 0.7s ease;
+      }
+
+      /* film grain */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        pointer-events: none;
+        opacity: var(--grain-opacity);
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 128px 128px;
+      }
+
+      /* animated gradient orbs */
+      .gradient-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        will-change: transform;
+      }
+
+      .orb-1 {
+        width: 45vmax;
+        height: 45vmax;
+        background: var(--orb-1);
+        top: -10%;
+        left: -5%;
+        animation: float-1 20s ease-in-out infinite;
+      }
+
+      .orb-2 {
+        width: 35vmax;
+        height: 35vmax;
+        background: var(--orb-2);
+        bottom: -15%;
+        right: -10%;
+        animation: float-2 24s ease-in-out infinite;
+      }
+
+      .orb-3 {
+        width: 30vmax;
+        height: 30vmax;
+        background: var(--orb-3);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: float-3 18s ease-in-out infinite;
+      }
+
+      @keyframes float-1 {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(8vw, 12vh) scale(1.05);
+        }
+        66% {
+          transform: translate(-4vw, 6vh) scale(0.97);
+        }
+      }
+
+      @keyframes float-2 {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(-10vw, -8vh) scale(1.03);
+        }
+        66% {
+          transform: translate(5vw, -14vh) scale(0.96);
+        }
+      }
+
+      @keyframes float-3 {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        33% {
+          transform: translate(-40%, -55%) scale(1.08);
+        }
+        66% {
+          transform: translate(-55%, -45%) scale(0.94);
+        }
+      }
+
+      /* theme toggle */
+      .theme-toggle {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 50;
+        background: var(--pill-bg);
+        border: 1px solid var(--pill-border);
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        transition: all 0.3s ease;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .theme-toggle:hover {
+        background: var(--pill-hover);
+        color: var(--text);
+      }
+      .theme-toggle svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* content */
+      .card {
+        position: relative;
+        z-index: 1;
+        max-width: 420px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.8rem;
+      }
+
+      .identity {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        opacity: 0;
+        animation: fadeUp 1.2s ease 0.3s forwards;
+      }
+
+      .name {
+        font-family: "Cormorant", serif;
+        font-weight: 300;
+        font-style: italic;
+        font-size: 3.4rem;
+        letter-spacing: -0.015em;
+        line-height: 1;
+        color: var(--text);
+        position: relative;
+        display: inline-block;
+      }
+
+      .name.glitching {
+        animation: glitch-jitter 80ms steps(2) infinite;
+      }
+
+      /* chromatic aberration via text-shadow during glitch */
+      .name.glitching-rgb {
+        text-shadow:
+          2px 0 rgba(255, 0, 0, 0.4),
+          -2px 0 rgba(0, 100, 255, 0.4);
+      }
+
+      @keyframes glitch-jitter {
+        0% {
+          transform: translate(0, 0);
+        }
+        20% {
+          transform: translate(-2px, 1px);
+        }
+        40% {
+          transform: translate(2px, -1px);
+        }
+        60% {
+          transform: translate(-1px, -1px);
+        }
+        80% {
+          transform: translate(1px, 1px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+
+      .tagline {
+        font-weight: 300;
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+        line-height: 1.6;
+      }
+
+      .tagline a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: opacity 0.3s ease;
+      }
+      .tagline a:hover {
+        opacity: 0.7;
+      }
+
+      .divider {
+        width: 1px;
+        height: 32px;
+        background: var(--divider);
+        opacity: 0;
+        animation: fadeUp 1.2s ease 0.5s forwards;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        justify-content: center;
+        opacity: 0;
+        animation: fadeUp 1.2s ease 0.65s forwards;
+      }
+
+      .link-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: var(--pill-bg);
+        border: 1px solid var(--pill-border);
+        border-radius: 100px;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 400;
+        letter-spacing: 0.03em;
+        transition: all 0.35s ease;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      .link-pill:hover {
+        background: var(--pill-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      }
+
+      .link-pill svg {
+        width: 14px;
+        height: 14px;
+        opacity: 0.5;
+        flex-shrink: 0;
+      }
+
+      footer {
+        position: fixed;
+        bottom: 1.5rem;
+        width: 100%;
+        text-align: center;
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        letter-spacing: 0.08em;
+        opacity: 0;
+        animation: fadeUp 1.2s ease 1s forwards;
+        white-space: nowrap;
+        z-index: 1;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding: 1.5rem 1.5rem 4rem;
+        }
+        .name {
+          font-size: 2.6rem;
+        }
+        .theme-toggle {
+          top: 1rem;
+          right: 1rem;
+        }
+        footer {
+          bottom: 1rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .orb {
+          animation: none !important;
+        }
+        .name.glitching {
+          animation: none !important;
+        }
+        .identity,
+        .divider,
+        .links,
+        footer {
+          animation-duration: 0s !important;
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- animated gradient orbs -->
+    <div class="gradient-bg">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg
+        class="icon-sun"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 3v1m0 16v1m8.485-9.485h-1M4.515 12.515h-1M18.364 5.636l-.707.707M6.343 17.657l-.707.707M18.364 18.364l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+        />
+      </svg>
+      <svg
+        class="icon-moon"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.5"
+        style="display: none"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21.752 15.002A9.718 9.718 0 0112.478 3.21a9.72 9.72 0 109.274 11.792z"
+        />
+      </svg>
+    </button>
+
+    <main class="card">
+      <div class="identity">
+        <h1 class="name">Murph</h1>
+        <p class="tagline">
+          designer at
+          <a href="https://verygood.ventures" target="_blank" rel="noopener"
+            >Very Good Ventures</a
+          ><br />advanced design systems<br />ai-enabled design tooling
+        </p>
+      </div>
+
+      <div class="divider"></div>
+
+      <nav class="links">
+        <a
+          class="link-pill"
+          href="https://github.com/verygoodmurph"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+            />
+          </svg>
+          GitHub
+        </a>
+        <a
+          class="link-pill"
+          href="https://github.com/verygoodmurph/figma-plugin-starter"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z"
+            />
+          </svg>
+          Figma Plugin Starter
+        </a>
+        <a
+          class="link-pill"
+          href="https://verygood.ventures"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+            />
+          </svg>
+          VGV
+        </a>
+      </nav>
+    </main>
+
+    <footer>murph &middot; very good ventures</footer>
+
+    <script>
+      // --- Theme toggle ---
+      const toggle = document.querySelector(".theme-toggle");
+      const sun = toggle.querySelector(".icon-sun");
+      const moon = toggle.querySelector(".icon-moon");
+      const html = document.documentElement;
+
+      function setTheme(theme) {
+        html.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        sun.style.display = theme === "dark" ? "none" : "block";
+        moon.style.display = theme === "dark" ? "block" : "none";
+      }
+
+      const saved = localStorage.getItem("theme");
+      if (saved) {
+        setTheme(saved);
+      } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        setTheme("light");
+      }
+
+      toggle.addEventListener("click", () => {
+        setTheme(html.getAttribute("data-theme") === "dark" ? "light" : "dark");
+      });
+
+      // --- Glitch effect on h1 ---
+      const nameEl = document.querySelector(".name");
+
+      const fonts = [
+        '"Cormorant", serif',
+        '"Playfair Display", serif',
+        '"Bodoni Moda", serif',
+        '"Instrument Serif", serif',
+        '"Libre Baskerville", serif',
+      ];
+
+      function triggerGlitch() {
+        nameEl.classList.add("glitching", "glitching-rgb");
+
+        let flicks = 0;
+        const total = 5 + Math.floor(Math.random() * 5);
+        const interval = setInterval(() => {
+          nameEl.style.fontFamily =
+            fonts[Math.floor(Math.random() * fonts.length)];
+          flicks++;
+          if (flicks >= total) {
+            clearInterval(interval);
+            nameEl.classList.remove("glitching", "glitching-rgb");
+          }
+        }, 70);
+      }
+
+      function scheduleGlitch() {
+        const delay = 3000 + Math.random() * 4000;
+        setTimeout(() => {
+          triggerGlitch();
+          scheduleGlitch();
+        }, delay);
+      }
+
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setTimeout(triggerGlitch, 1800);
+        scheduleGlitch();
+      }
+    </script>
+  </body>
+</html>
